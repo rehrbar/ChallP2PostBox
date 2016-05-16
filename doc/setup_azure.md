@@ -25,4 +25,4 @@ TODO
 5. Select the location nearest to you.
 6. Click on "Create".
 
-![Creation of Azure Cloud Service](/img/AzureCloudService.png)
+![Creation of Azure Cloud Service](/doc/img/AzureCloudService.png)
