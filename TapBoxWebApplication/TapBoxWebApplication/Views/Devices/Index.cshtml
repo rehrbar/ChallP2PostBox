@@ -1,0 +1,45 @@
+﻿@model IEnumerable<TapBoxWebApplication.Models.DeviceViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DeviceName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastContact)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.DeviceName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LastContact)
+        </td>
+        <th>
+            @Html.DisplayFor(modelItem => item.Description)
+        </th>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.DeviceName }) |
+            @Html.ActionLink("Details", "Details", new { id=item.DeviceName }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.DeviceName })
+        </td>
+    </tr>
+}
+
+</table>
