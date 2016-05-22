@@ -1,29 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using Microsoft.Azure;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.ServiceBus;
-using Microsoft.ServiceBus.Messaging;
 
-namespace TapBoxWebjob {
-    // To learn more about Microsoft Azure WebJobs SDK, please see http://go.microsoft.com/fwlink/?LinkID=320976
-    class Program {
-        // Please set the following connection strings in app.config for this WebJob to run:
-        // AzureWebJobsDashboard and AzureWebJobsStorage
-        static void Main()
+namespace TapBoxWebjob
+{
+    public class Program
+    {
+        private static void Main()
         {
-            var config = new JobHostConfiguration();
-            var eventHubConfig = new EventHubConfiguration();
+            var client = new ReceiverClient(CloudConfigurationManager.GetSetting("AzureIoTHub.ConnectionString"));
 
-            eventHubConfig.AddReceiver(Functions.EventHubName, CloudConfigurationManager.GetSetting("AzureIotHub.EventHubEndpoint"));
-            config.UseEventHub(eventHubConfig);
+            client.OnNewMessageEvent += (id, uid) =>
+            {
+                Console.WriteLine($"Device: {id} - UID: {uid}");
+                // TODO check against database and send c2d message if it's allowed.
+            };
 
-            var host = new JobHost(config);
-            // The following code ensures that the WebJob will be running continuously
-            host.RunAndBlock();
+            client.ReceiveMessages();
+            Console.WriteLine("Press return to shut down.");
+            Console.ReadLine();
+            client.CancelReceiving();
+            Thread.Sleep(200);
         }
     }
 }
