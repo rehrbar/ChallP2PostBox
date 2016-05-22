@@ -1,0 +1,8 @@
+﻿@model TapBoxWebApplication.Models.UnlockDeviceViewModel
+
+<h2>Unlocking @Model.DeviceName</h2>
+
+<p>Unlock requested at: @Model.Requested</p>
+<p>Command sent: The device should unlock in a moment.</p>
+
+<p>@Html.ActionLink("Back to device overview", "Index")</p>

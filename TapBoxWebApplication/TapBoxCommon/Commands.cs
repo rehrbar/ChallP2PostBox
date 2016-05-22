@@ -19,7 +19,7 @@ namespace TapBoxCommon {
         ///     Sends a c2d message through IoT Hub to the device.
         /// </summary>
         /// <param name="identity">Device id of the receiver.</param>
-        public async Task SendOpenLockAsync(string identity) {
+        public async Task SendUnlockAsync(string identity) {
             var commandMessage = new Message(Encoding.ASCII.GetBytes("OpenLock"));
             await _serviceClient.SendAsync(identity, commandMessage);
         }

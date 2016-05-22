@@ -5,11 +5,14 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.Azure.Devices;
 using TapBoxCommon;
-using TapBoxCommon.Models;
 using TapBoxWebApplication.Models;
+using Device = TapBoxCommon.Models.Device;
 
 namespace TapBoxWebApplication.Controllers
 {
@@ -127,6 +130,18 @@ namespace TapBoxWebApplication.Controllers
             _deviceManager.RemoveDeviceAsync(device.DeviceName);
             _db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// Sends a request to unlock to the device.
+        /// </summary>
+        /// <param name="id">Device which should be unlocked.</param>
+        public async Task<ActionResult> Unlock(string id)
+        {
+            // TODO why does this need to be async? Couldn't we wait until the task finishes?
+            var command = new Commands(ConfigurationManager.AppSettings["AzureIoTHub.ConnectionString"]);
+            await command.SendUnlockAsync(id);
+            return View(new UnlockDeviceViewModel() {DeviceName = id});
         }
 
         protected override void Dispose(bool disposing)
