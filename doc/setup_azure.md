@@ -36,9 +36,20 @@
 
 ## Azure App Service
 
-1. Im Hub-Menu, klicke auf "App Services"
-2. Gib einen gültigen App-namen ein, zum Beispiel "tapbox"
+1. Im Hub-Menu, klicke auf "App Services".
+2. Gib einen gültigen App-namen ein, zum Beispiel "tapbox".
 3. Wähle deine Subscription aus, die verwendet werden soll.
 4. Wähle die zuvor erstellte Ressourcengruppe aus, zum Beispiel "ChallengeProj".
 5. Wähle den Service Plan aus, welcher auch den Standort bestimmt. Erzeuge falls nötig einen neuen Service plan (z.B. mit Standort "West Europe" und Pricing Tier "B1").
 6. Klicke auf "Create".
+
+## Azure SQL Database
+
+1. Im hub-Menü, klicke auf "SQL databases".
+2. Gib einen gültigen Datenbanknamen ein, zum Beispiel "tapboxdb".
+3. Wähle deine Subscription aus, die verwendet werden soll.
+4. Wähle die zuvor erstellte Ressourcengruppe aus, zum Beispiel "ChallengeProj".
+5. Wähle als Source "blank database".
+6. Wähle den Server aus, der die Datenbank beinhalten soll. Erzeuge einen neuen, falls nötig.
+7. Wähle das Pricing tier aus, es reicht ein "S0".
+8. Der Rest kann beim Standard belassen werden. Klicke nun auf "Create".
