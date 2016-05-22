@@ -34,13 +34,11 @@
 6. Der Rest kann beim Standard belassen werden. Klicke nun auf "Create".
 
 
-## Azure Cloud Service
+## Azure App Service
 
-1. Im Hub-Menu, klicke auf "Cloud service (classic)"
-2. Gib einen gültigen DNS-Namen ein, zum Beispiel "tapbox"
+1. Im Hub-Menu, klicke auf "App Services"
+2. Gib einen gültigen App-namen ein, zum Beispiel "tapbox"
 3. Wähle deine Subscription aus, die verwendet werden soll.
 4. Wähle die zuvor erstellte Ressourcengruppe aus, zum Beispiel "ChallengeProj".
-5. Wähle den Standort in deiner Nähe aus.
+5. Wähle den Service Plan aus, welcher auch den Standort bestimmt. Erzeuge falls nötig einen neuen Service plan (z.B. mit Standort "West Europe" und Pricing Tier "B1").
 6. Klicke auf "Create".
-
-![Creation of Azure Cloud Service](img/AzureCloudService.png)
