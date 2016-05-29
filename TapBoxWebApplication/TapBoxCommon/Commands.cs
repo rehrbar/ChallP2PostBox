@@ -20,7 +20,7 @@ namespace TapBoxCommon {
         /// </summary>
         /// <param name="identity">Device id of the receiver.</param>
         public async Task SendUnlockAsync(string identity) {
-            var commandMessage = new Message(Encoding.ASCII.GetBytes("OpenLock"));
+            var commandMessage = new Message(Encoding.UTF8.GetBytes("OpenLock"));
             await _serviceClient.SendAsync(identity, commandMessage);
         }
     }

@@ -114,11 +114,17 @@ namespace TapBoxWebjob
 
                 var data = Encoding.UTF8.GetString(eventData.GetBytes());
                 // TODO catch if messageType not available
-                
-                if (eventData.Properties["messageType"].Equals("accessKey")) {
-                    HandleUnlockRequest(data);
-                } else if (eventData.Properties["messageType"].Equals("weightSensor")) {
-                    HandleWeightSensorMessage(data);
+
+                try {
+                    if (eventData.Properties["messageType"].Equals("accessKey")) {
+                        HandleUnlockRequest(data);
+                    }
+                    else if (eventData.Properties["messageType"].Equals("weightSensor")) {
+                        HandleWeightSensorMessage(data);
+                    }
+                }
+                catch (Exception)
+                {
                 }
                    
             }
