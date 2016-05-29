@@ -3,6 +3,7 @@ import time
 import sys
 import iothub_client
 import re
+import serial
 from iothub_client import *
 
 # HTTP options
@@ -26,6 +27,11 @@ protocol = IoTHubTransportProvider.AMQP
 
 receive_context = 0
 
+# Serial communication
+fsrRegexPattern = re.compile("^fsrValue:(\d+)\r$")
+cardUidRegexPattern = re.compile("^CardUID:([0-9a-fA-F]+)\r$")
+ser = serial.Serial("/dev/ttyACM0", 9600)
+
 # String containing Hostname, Device Id & Device Key in the format:
 # "HostName=<host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"
 #connection_string = "HostName=<host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"
@@ -38,7 +44,8 @@ if not m:
     sys.exit(1)
 deviceId = m.group(1)
 
-msg_txt = "{\"deviceId\": \"%s\",\"cardUid\": %s}"
+key_msg_txt = "{\"deviceId\": \"%s\",\"cardUid\": %s}"
+fsr_msg_txt = "{\"deviceId\": \"%s\",\"sensorValue\": %d}"
 
 def receive_message_callback(message, counter):
     buffer = message.get_bytearray()
@@ -49,6 +56,8 @@ def receive_message_callback(message, counter):
     key_value_pair = map_properties.get_internals()
     print("    Properties: %s" % key_value_pair)
     counter += 1
+    # TODO check if server message is really unlock.
+    ser.write(b"unlock\n")
     return IoTHubMessageDispositionResult.ACCEPTED
 
 def send_confirmation_callback(message, result, user_context):
@@ -60,8 +69,6 @@ def send_confirmation_callback(message, result, user_context):
     print("    correlation_id: %s" % message.correlation_id)
     key_value_pair = map_properties.get_internals()
     print("    Properties: %s" % key_value_pair)
-
-    
 
 def iothub_client_init():
     # prepare iothub client
@@ -78,38 +85,40 @@ def iothub_client_init():
         receive_message_callback, receive_context)
     return iotHubClient
     
-def iothub_client_sample_run():
+def iothub_client_run():
 
     try:
 
         iotHubClient = iothub_client_init()
+        print("IoTHubClient running, press Ctrl-C to exit")
 
         while True:
-            i = 1337
-            msg_txt_formatted = msg_txt % (deviceId, "112233")
-            message = IoTHubMessage(msg_txt_formatted)
-            # optional: assign ids
-            message.message_id = "message_%d" % i
-            message.correlation_id = "correlation_%d" % i
-            # optional: assign properties
-            prop_map = message.properties()
-            prop_text = "PropMsg_%d" % i
-            prop_map.add("Property", prop_text)
-            iotHubClient.send_event_async(message, send_confirmation_callback, i)
-            print(
-                "IoTHubClient.send_event_async accepted message [%d]"
-                " for transmission to IoT Hub." %
-                i)
-
             # Wait for Commands or exit
-            print("IoTHubClient waiting for commands, press Ctrl-C to exit")
-
-            n = 0
-            while n < 6:
-                status = iotHubClient.get_send_status()
-                print("Send status: %s" % status)
-                time.sleep(10)
-                n += 1
+            serialData = ser.readline().decode("ASCII") 
+            print("Serial data: " + serialData)
+            groups = fsrRegexPattern.search(serialData)
+            if groups is not None:
+                fsr = groups.group(1)
+                print("-> Sensor value: " + fsr)
+                
+                message = IoTHubMessage(fsr_msg_txt % (deviceId, int(fsr)) )
+                prop_map = message.properties()
+                prop_map.add("messageType", "weightSensor")
+                iotHubClient.send_event_async(message, send_confirmation_callback, 1234)
+            else:
+                print("Not a sensor value")
+                
+            groups = cardUidRegexPattern.search(serialData)
+            if groups is not None:
+                uid = groups.group(1)
+                print("-> Card UID: " + uid)
+                
+                message = IoTHubMessage(key_msg_txt % (deviceId, uid) )
+                prop_map = message.properties()
+                prop_map.add("messageType", "accessKey")
+                iotHubClient.send_event_async(message, send_confirmation_callback, 3333)
+            else:
+                print("Not a key card")
 
     except IoTHubError as e:
         print("Unexpected error %s from IoTHub" % e)
@@ -125,4 +134,4 @@ if __name__ == '__main__':
     print("    Protocol %s" % protocol)
     print("    Connection string=%s" % connection_string)
 
-    iothub_client_sample_run()
+    iothub_client_run()
