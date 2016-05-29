@@ -1,4 +1,15 @@
 
+/*
+ * Generated Messages over Serial:
+ *  fsrValue:800
+ *  CardUID:4511E552
+ *  Received message: unlock;
+ *  fsrValue:0
+ * 
+ */
+
+#include <SPI.h>        // RC522 Module uses SPI protocol
+#include "MFRC522.h"  // Library for Mifare RC522 Devices
 #include <Servo.h>
 
 
@@ -6,11 +17,16 @@
 #define servoPin 3 // Pin for servo
 #define loraSSPin 10 // Pin for Slave Select Lora Shield
 #define rfidSSPin 9 // Pin for Slave Select RFID Shield
+#define rfidRST_PIN 8
 
 #define STATE_EMPTY 0
 #define STATE_FULL 1
 #define STATE_LOCKED 2
 int state = 0;
+
+
+MFRC522 rfid(rfidSSPin, rfidRST_PIN);
+MFRC522::MIFARE_Key key; 
 
 Servo myservo;  // create servo object to control a servo
 String inputString = "";         // a string to hold incoming data
@@ -18,16 +34,25 @@ boolean stringComplete = false;  // whether the string is complete
 
 void setup() {
   myservo.attach(servoPin);  // attaches the servo on pin 9 to the servo object
-  pinMode(rfidSSPin, OUTPUT);
-  digitalWrite(rfidSSPin, HIGH);
+
   // Disable Lora shield since we use usb communication for the moment.
   pinMode(loraSSPin, OUTPUT);
   digitalWrite(loraSSPin, HIGH);
+  
+  // Setup RFID
+  SPI.begin(); // Init SPI bus
+  rfid.PCD_Init(); // Init MFRC522 
+
+  for (byte i = 0; i < 6; i++) {
+    key.keyByte[i] = 0xFF;
+  }
 
   Serial.begin(9600);
   while (!Serial) ; // Wait for serial port to be available
+  
   // reserve 200 bytes for the inputString:
   inputString.reserve(200);
+
 }
 
 void loop() {
@@ -55,7 +80,8 @@ void StateEmpty(){
 
 void StateLocked(){
   if(stringComplete){
-    Serial.print("Received message: ");
+    // TODO remove debugging info
+    Serial.print(F("Received message:"));
     Serial.print(inputString);
     Serial.println(";");
 
@@ -67,7 +93,7 @@ void StateLocked(){
     inputString = "";
     stringComplete = false;
   }
-  // TODO Read RFID
+  ReadAndPrintRfid();
 }
 
 // Close after a delay, so you have time to close the lid.
@@ -89,7 +115,7 @@ int GetFsrValue(){
 }
 
 void Close(){
-  myservo.write(170);
+  myservo.write(160);
 }
 
 void Open(){
@@ -102,6 +128,27 @@ void printFsrValue(int value){
     Serial.println();
 }
 
+void ReadAndPrintRfid(){
+  if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {
+    Serial.print(F("CardUID:"));
+    printHex(rfid.uid.uidByte, rfid.uid.size);
+    Serial.println();
+  }
+  // Halt PICC
+  rfid.PICC_HaltA();
+  // Stop encryption on PCD
+  rfid.PCD_StopCrypto1();
+}
+
+/**
+ * Helper routine to dump a byte array as hex values to Serial. 
+ */
+void printHex(byte *buffer, byte bufferSize) {
+  for (byte i = 0; i < bufferSize; i++) {
+    Serial.print(buffer[i] < 0x10 ? "0" : "");
+    Serial.print(buffer[i], HEX);
+  }
+}
 
 /*
   SerialEvent occurs whenever a new data comes in the
