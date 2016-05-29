@@ -1,10 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using Microsoft.Azure;
 using TapBoxCommon;
-using System.Threading.Tasks;
-using System.Linq;
-using TapBoxCommon.Models;
 
 namespace TapBoxWebjob
 {
@@ -14,27 +12,33 @@ namespace TapBoxWebjob
         {
             var client = new ReceiverClient(CloudConfigurationManager.GetSetting("AzureIoTHub.ConnectionString"));
             var command = new Commands(CloudConfigurationManager.GetSetting("AzureIoTHub.ConnectionString"));
-            var dbContext = new TapBoxContext();
             client.OnNewAccessKeyMessageEvent += async (id, uid) =>
             {
                 Console.WriteLine($"Device: {id} - UID: {uid}");
-                var authorization =
-                    dbContext.Authorizations.FirstOrDefault(a => a.DeviceName.Equals(id) && a.Key.CardUID.Equals(uid));
-                // TODO check against database and send c2d message if it's allowed.
-                if (authorization == null)
+                using (var dbContext = new TapBoxContext())
                 {
-                    Console.WriteLine("Key/Device does not match.");
-                    return;
+                    var authorization =
+                        dbContext.Authorizations.FirstOrDefault(
+                            a => a.DeviceName.Equals(id) && a.Key.CardUID.Equals(uid));
+                    // TODO check against database and send c2d message if it's allowed.
+                    if (authorization == null)
+                    {
+                        Console.WriteLine("Key/Device does not match.");
+                        return;
+                    }
+                    Console.WriteLine("Lucky guess? - Device shall be unlocked, your Majesty!");
+                    await command.SendUnlockAsync(id);
                 }
-                Console.WriteLine("Lucky guess? - Device shall be unlocked, your Majesty!");
-                await command.SendUnlockAsync(id);
             };
 
             client.OnNewReadWeightSensorEvent += (deviceId, weightSensorValue) =>
             {
                 Console.WriteLine($"Device: {deviceId} - WeightSensorValue: {weightSensorValue}");
-                Device dev = dbContext.Devices.Find(deviceId);
-                MailSender.SendMailToOwner(dev, weightSensorValue);
+                using (var dbContext = new TapBoxContext())
+                {
+                    var dev = dbContext.Devices.Find(deviceId);
+                    MailSender.SendMailToOwner(dev, weightSensorValue);
+                }
             };
 
             client.ReceiveMessages();
