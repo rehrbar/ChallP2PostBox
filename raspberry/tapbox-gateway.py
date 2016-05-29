@@ -44,7 +44,7 @@ if not m:
     sys.exit(1)
 deviceId = m.group(1)
 
-key_msg_txt = "{\"deviceId\": \"%s\",\"cardUid\": %s}"
+key_msg_txt = "{\"deviceId\": \"%s\",\"cardUid\": \"%s\"}"
 fsr_msg_txt = "{\"deviceId\": \"%s\",\"sensorValue\": %d}"
 
 def receive_message_callback(message, counter):
@@ -57,7 +57,8 @@ def receive_message_callback(message, counter):
     print("    Properties: %s" % key_value_pair)
     counter += 1
     # TODO check if server message is really unlock.
-    ser.write(b"unlock\n")
+    if(buffer[:size].decode('utf-8') == "OpenLock"):
+        ser.write(b"unlock\n")
     return IoTHubMessageDispositionResult.ACCEPTED
 
 def send_confirmation_callback(message, result, user_context):
