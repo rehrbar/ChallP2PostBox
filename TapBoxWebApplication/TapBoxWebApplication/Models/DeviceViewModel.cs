@@ -15,6 +15,7 @@ namespace TapBoxWebApplication.Models
             DeviceName = model.DeviceName;
             Description = model.Description;
             LastContact = model.LastContact;
+            OwnerMailAddress = model.OwnerMailAddress;
         }
 
         [DataType(DataType.MultilineText)]
@@ -25,6 +26,8 @@ namespace TapBoxWebApplication.Models
 
         public DateTime? LastContact { get; set; }
 
+        public string OwnerMailAddress { get; set; }
+
         public string DeviceKeyPrimary { get; set; }
         public string DeviceKeySecondary { get; set; }
 
@@ -32,6 +35,7 @@ namespace TapBoxWebApplication.Models
         public void UpdateModel(Device model)
         {
             model.Description = Description;
+            model.OwnerMailAddress = OwnerMailAddress;
         }
     }
 }

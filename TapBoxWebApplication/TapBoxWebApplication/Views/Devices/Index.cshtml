@@ -20,6 +20,9 @@
         <th>
             @Html.DisplayNameFor(model => model.Description)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OwnerMailAddress)
+        </th>
         <th></th>
     </tr>
 
@@ -33,6 +36,9 @@
         </td>
         <th>
             @Html.DisplayFor(modelItem => item.Description)
+        </th>
+        <th>
+            @Html.DisplayFor(modelItem => item.OwnerMailAddress)
         </th>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.DeviceName }) |

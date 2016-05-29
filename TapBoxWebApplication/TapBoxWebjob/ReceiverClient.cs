@@ -19,11 +19,18 @@ namespace TapBoxWebjob
     public class ReceiverClient
     {
         /// <summary>
-        ///     Delegate which gets called if a new message is received.
+        ///     Delegate which gets called if a new AccessKeyMessage is received.
         /// </summary>
         /// <param name="deviceId">Device id of the source.</param>
         /// <param name="cardUid">Measured value of the device.</param>
-        public delegate void NewMessageEventHandler(string deviceId, string cardUid);
+        public delegate void NewAccessKeyMessageEventHandler(string deviceId, string cardUid);
+        
+        /// <summary>
+        ///     Delegate which gets called if a new message is received.
+        /// </summary>
+        /// <param name="deviceId">Device id of the source.</param>
+        /// <param name="sensorValue">Measured sensor Value.</param>
+        public delegate void NewReadWeightSensorEventHandler(string deviceId, int sensorValue);
 
         /// <summary>
         ///     Name of the event queue.
@@ -51,7 +58,11 @@ namespace TapBoxWebjob
         /// <summary>
         ///     Occurs after a new d2c message was received.
         /// </summary>
-        public event NewMessageEventHandler OnNewMessageEvent;
+        public event NewAccessKeyMessageEventHandler OnNewAccessKeyMessageEvent;
+        /// <summary>
+        ///     Occurs after a new d2c message was received.
+        /// </summary>
+        public event NewReadWeightSensorEventHandler OnNewReadWeightSensorEvent;
 
         /// <summary>
         ///     Starts tasks to recieve d2c messages in background on all partitions.
@@ -102,15 +113,27 @@ namespace TapBoxWebjob
                 if (eventData == null) continue;
 
                 var data = Encoding.UTF8.GetString(eventData.GetBytes());
-                // TODO get sender out of eventData
-                Handle(data);
+                // TODO catch if messageType not available
+                
+                if (eventData.Properties["messageType"].Equals("accessKey")) {
+                    HandleUnlockRequest(data);
+                } else if (eventData.Properties["messageType"].Equals("weightSensor")) {
+                    HandleWeightSensorMessage(data);
+                }
+                   
             }
         }
 
-        private void Handle(string rawData)
+        private void HandleWeightSensorMessage(string rawData)
+        {
+            var dto = JsonConvert.DeserializeObject<ReadWeightSensorDTO>(rawData);
+            OnNewReadWeightSensorEvent?.Invoke(dto.DeviceId, dto.SensorValue);
+        }
+
+        private void HandleUnlockRequest(string rawData)
         {
             var dto = JsonConvert.DeserializeObject<AccessKeyMessageDTO>(rawData);
-            OnNewMessageEvent?.Invoke(dto.DeviceId, dto.CardUid);
+            OnNewAccessKeyMessageEvent?.Invoke(dto.DeviceId, dto.CardUid);
         }
     }
 }

@@ -12,6 +12,7 @@ namespace TapBoxCommon.Models {
         public string DeviceName { get; set; }
         public string Description { get; set; }
         public DateTime? LastContact { get; set; }
+        public string OwnerMailAddress { get; set; }
     }
     
 }
