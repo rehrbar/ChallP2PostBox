@@ -16,6 +16,6 @@ namespace TapBoxCommon.Models {
         [Required]
         public string OwnerEmail { get; set; }
 
-        public virtual List<Device> Devices { get; set; }
+        public virtual IEnumerable<Authorization> Authorizations { get; set; }
     }
 }

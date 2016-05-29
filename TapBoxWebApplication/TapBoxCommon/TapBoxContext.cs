@@ -15,5 +15,6 @@ namespace TapBoxCommon
 
         public DbSet<Device> Devices { get; set; }
         public DbSet<AccessKey> AccessKeys { get; set; }
+        public DbSet<Authorization> Authorizations { get; set; }
     }
 }

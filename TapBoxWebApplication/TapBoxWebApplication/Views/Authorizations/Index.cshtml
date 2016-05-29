@@ -1,0 +1,45 @@
+﻿@model IEnumerable<TapBoxCommon.Models.Authorization>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Device.DeviceName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Device.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Key.CardUID)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Device.DeviceName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Device.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Key.CardUID)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { deviceId = item.DeviceName, keyId = item.AccessKeyId}) |
+            @Html.ActionLink("Details", "Details", new { deviceId = item.DeviceName, keyId = item.AccessKeyId }) |
+            @Html.ActionLink("Delete", "Delete", new { deviceId = item.DeviceName, keyId = item.AccessKeyId })
+        </td>
+    </tr>
+}
+
+</table>

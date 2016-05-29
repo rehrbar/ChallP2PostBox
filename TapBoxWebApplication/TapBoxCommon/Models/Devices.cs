@@ -13,6 +13,8 @@ namespace TapBoxCommon.Models {
         public string Description { get; set; }
         public DateTime? LastContact { get; set; }
         public string OwnerMailAddress { get; set; }
+
+        public virtual IEnumerable<Authorization> Authorizations { get; set; } 
     }
     
 }

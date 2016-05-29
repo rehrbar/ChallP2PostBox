@@ -1,0 +1,42 @@
+﻿@model TapBoxCommon.Models.Authorization
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Authorization</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Device.DeviceName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Device.DeviceName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Device.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Device.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Key.CardUID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Key.CardUID)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { deviceId = Model.DeviceName, keyId = Model.AccessKeyId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

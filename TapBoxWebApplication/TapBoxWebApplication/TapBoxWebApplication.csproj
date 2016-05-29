@@ -145,12 +145,14 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccessKeysController.cs" />
+    <Compile Include="Controllers\AuthorizationsController.cs" />
     <Compile Include="Controllers\DevicesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccessKeyViewModel.cs" />
+    <Compile Include="Models\AuthorizationViewModel.cs" />
     <Compile Include="Models\DeviceViewModel.cs" />
     <Compile Include="Models\UnlockDeviceViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -213,6 +215,11 @@
     <Content Include="Views\Devices\Edit.cshtml" />
     <Content Include="Views\Devices\Index.cshtml" />
     <Content Include="Views\Devices\Unlock.cshtml" />
+    <Content Include="Views\Authorizations\Create.cshtml" />
+    <Content Include="Views\Authorizations\Delete.cshtml" />
+    <Content Include="Views\Authorizations\Details.cshtml" />
+    <Content Include="Views\Authorizations\Edit.cshtml" />
+    <Content Include="Views\Authorizations\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

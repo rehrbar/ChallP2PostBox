@@ -18,18 +18,23 @@ namespace TapBoxWebjob
             client.OnNewAccessKeyMessageEvent += async (id, uid) =>
             {
                 Console.WriteLine($"Device: {id} - UID: {uid}");
+                var authorization =
+                    dbContext.Authorizations.FirstOrDefault(a => a.DeviceName.Equals(id) && a.Key.CardUID.Equals(uid));
                 // TODO check against database and send c2d message if it's allowed.
-                if (uid == "4511E552")
+                if (authorization == null)
                 {
-                    Console.WriteLine("Lucky guess? - Device shall be unlocked, your Majesty!");
-                    await command.SendUnlockAsync(id);
+                    Console.WriteLine("Key/Device does not match.");
+                    return;
                 }
+                Console.WriteLine("Lucky guess? - Device shall be unlocked, your Majesty!");
+                await command.SendUnlockAsync(id);
             };
 
-            client.OnNewReadWeightSensorEvent += (DeviceId, WeightSensorValue) =>
+            client.OnNewReadWeightSensorEvent += (deviceId, weightSensorValue) =>
             {
-                Device dev = dbContext.Devices.Find(DeviceId);
-                MailSender.SendMailToOwner(dev, WeightSensorValue);
+                Console.WriteLine($"Device: {deviceId} - WeightSensorValue: {weightSensorValue}");
+                Device dev = dbContext.Devices.Find(deviceId);
+                MailSender.SendMailToOwner(dev, weightSensorValue);
             };
 
             client.ReceiveMessages();

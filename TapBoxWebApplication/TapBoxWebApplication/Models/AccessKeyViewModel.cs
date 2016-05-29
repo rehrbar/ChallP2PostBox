@@ -15,7 +15,6 @@ namespace TapBoxWebApplication.Models {
             CardUID = model.CardUID;
             LastAccessed = model.LastAccessed;
             OwnerEmail = model.OwnerEmail;
-            Devices = model.Devices.Select(device => device.DeviceName);
         }
 
         public Guid Id { get; set; }
@@ -24,8 +23,6 @@ namespace TapBoxWebApplication.Models {
         public DateTime? LastAccessed { get; set; }
         [Required]
         public string OwnerEmail { get; set; }
-
-        public IEnumerable<string> Devices { get; set; }
 
         public void UpdateModel(AccessKey model)
         {
