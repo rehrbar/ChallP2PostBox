@@ -83,6 +83,10 @@
     <Compile Include="Migrations\201605211759499_Initial.Designer.cs">
       <DependentUpon>201605211759499_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201605291408210_DeviceOwnerMail.cs" />
+    <Compile Include="Migrations\201605291408210_DeviceOwnerMail.Designer.cs">
+      <DependentUpon>201605291408210_DeviceOwnerMail.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="TapBoxContext.cs" />
     <Compile Include="Models\AccessKey.cs" />
@@ -96,6 +100,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201605211759499_Initial.resx">
       <DependentUpon>201605211759499_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201605291408210_DeviceOwnerMail.resx">
+      <DependentUpon>201605291408210_DeviceOwnerMail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
