@@ -21,7 +21,7 @@ namespace TapBoxWebjob
             myMessage.Subject = "Notification from your Tapbox";
 
             Console.WriteLine($"Device: {NotifierDevice.DeviceName} - Sensor Value: {SensorValue}");
-            if (SensorValue < 20)
+            if (SensorValue < 100)
             {
                 Console.WriteLine("Your Mailbox is Empty");
                 return;
